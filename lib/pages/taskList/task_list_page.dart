@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/models/task_model.dart';
+import 'package:todo_app/pages/taskCreate/task_create_page.dart';
 import 'package:todo_app/pages/taskList/widgets/task_widget.dart';
 
 class TaskListPage extends StatefulWidget {
@@ -24,6 +25,16 @@ class _TaskListPageState extends State<TaskListPage> {
           final task = tasks[index];
           return TaskWidget(task: task);
         },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (BuildContext context) => const TaskCreatePage(),
+            ),
+          );
+        },
+        child: const Icon(Icons.add),
       ),
     );
   }
