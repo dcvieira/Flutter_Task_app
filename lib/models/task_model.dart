@@ -21,9 +21,20 @@ class Task {
     bool isCompleted = false,
   }) =>
       Task(
-          id: const Uuid().v1(),
-          title: title,
-          subtitle: subtitle ?? '',
-          date: date ?? DateTime.now(),
-          isCompleted: isCompleted);
+        id: const Uuid().v1(),
+        title: title,
+        subtitle: subtitle ?? '',
+        date: date ?? DateTime.now(),
+        isCompleted: isCompleted,
+      );
+
+   factory Task.fromMap(Map<String, dynamic> data) {
+    return Task(
+      id: data['id'],
+      title: data['title'],
+      subtitle: data['subtitle'],
+      date: DateTime.parse(data['date']),
+      isCompleted: data['is_completed'],
+    );
+  }
 }
