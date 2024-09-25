@@ -10,23 +10,12 @@ class SupabaseTasksRepository {
 
   Future createTask(Task task) async {
     final supabase = Supabase.instance.client;
-    await supabase.from('tasks').insert({
-      'id': task.id,
-      'title': task.title,
-      'subttile': task.subtitle,
-      'isCompleted': task.isCompleted,
-      'date': task.date,
-    });
+    await supabase.from('tasks').insert(task.toMap());
   }
 
   Future updateTask(Task task) async {
     final supabase = Supabase.instance.client;
-    await supabase.from('tasks').update({
-      'title': task.title,
-      'subttile': task.subtitle,
-      'isCompleted': task.isCompleted,
-      'date': task.date,
-    }).eq('id', task.id);
+    await supabase.from('tasks').update(task.toMap()).eq('id', task.id);
   }
 
   Future deleteTask(String taskId) async {

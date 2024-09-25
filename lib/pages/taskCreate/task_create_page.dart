@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:todo_app/models/task_model.dart';
+import 'package:todo_app/providers/task_provider.dart';
 
 class TaskCreatePage extends StatefulWidget {
   const TaskCreatePage({super.key, this.task});
@@ -11,46 +14,109 @@ class TaskCreatePage extends StatefulWidget {
 }
 
 class _TaskCreatePageState extends State<TaskCreatePage> {
-  final taskControllerForTitle = TextEditingController();
-  final taskControllerForSubtitle = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  final titleController = TextEditingController();
+  final subtitleController = TextEditingController();
+  bool editMode = false;
+  String pageTitle = '';
+
   DateTime? date;
+
+  @override
+  void initState() {
+    editMode = widget.task != null;
+    pageTitle = editMode ? 'Edit Task' : 'New Task';
+    if (editMode) {
+      titleController.text = widget.task!.title;
+      subtitleController.text = widget.task!.subtitle;
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("New Task"),
+        title: Text(pageTitle),
       ),
       body: SingleChildScrollView(
-        child: Column(
-          children: [
-            TextFormField(
-              controller: taskControllerForTitle,
-              maxLines: 6,
-              decoration: InputDecoration(
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey.shade300),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey.shade300),
-                ),
-              ),
-            ),
-            TextFormField(
-              controller: taskControllerForSubtitle,
-              decoration: InputDecoration(
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey.shade300),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.grey.shade300),
-                ),
-              ),
-            ),
-            _buildDatePicker(),
-          ],
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              _buildTitle(),
+              _buildSubtitle(),
+              _buildDatePicker(),
+              _buildButton(),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildButton() {
+    return ElevatedButton(
+      onPressed: () async {
+        final isValid = _formKey.currentState!.validate();
+        if (isValid) {
+          final title = titleController.text;
+          final subtitle = subtitleController.text;
+          final taskProvider = context.read<TaskProvider>();
+
+          // save task
+          if (editMode) {
+            final taskForEdit = widget.task!.copyWith(
+              title: title,
+              subtitle: subtitle,
+              date: date,
+            );
+            await taskProvider.updateTask(taskForEdit);
+
+          } else {
+            final newTask = Task.create(title: title, subtitle: subtitle, date: date);
+            await taskProvider.addTask(newTask);
+          }
+
+          Navigator.of(context).pop();
+        }
+      },
+      child: const Text(
+        'Create',
+        style: TextStyle(
+          fontSize: 17,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
+  TextFormField _buildSubtitle() {
+    return TextFormField(
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Subtitle required';
+        }
+        return null;
+      },
+      controller: subtitleController,
+      decoration: const InputDecoration(
+          border: OutlineInputBorder(), label: Text('Title')),
+    );
+  }
+
+  TextFormField _buildTitle() {
+    return TextFormField(
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Title required';
+        }
+        return null;
+      },
+      controller: titleController,
+      maxLines: 6,
+      decoration: const InputDecoration(
+          border: OutlineInputBorder(), label: Text('Title')),
     );
   }
 
@@ -78,9 +144,9 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
         ),
         child: Row(
           children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 10),
-              child: Text('MyString.dateString'),
+            const Padding(
+              padding: EdgeInsets.only(left: 10),
+              child: Text('Date'),
             ),
             Expanded(child: Container()),
             Container(
@@ -92,7 +158,7 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
                   color: Colors.grey.shade100),
               child: Center(
                 child: Text(DateFormat.yMMMEd()
-                    .format(widget.task?.date ?? DateTime.now())
+                    .format(date ?? DateTime.now())
                     .toString()),
               ),
             )

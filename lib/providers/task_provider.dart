@@ -8,6 +8,8 @@ class TaskProvider with ChangeNotifier {
   List<Task> _tasks = [];
   List<Task> get tasks => _tasks;
 
+  int get totalTasksDone => _tasks.where((t) =>  t.isCompleted).length;
+
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
