@@ -24,13 +24,15 @@ class TaskWidget extends StatelessWidget {
       },
       leading: GestureDetector(
         onTap: () {
-          final newTask  = task.copyWith(isCompleted: !task.isCompleted);
+          final newTask = task.copyWith(isCompleted: !task.isCompleted);
           context.read<TaskProvider>().updateTask(newTask);
         },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 600),
           decoration: BoxDecoration(
-              color: task.isCompleted ? MyColors.primaryColor : Colors.white,
+              color: task.isCompleted
+                  ? Theme.of(context).colorScheme.primary
+                  : Colors.white,
               shape: BoxShape.circle,
               border: Border.all(color: Colors.grey, width: .8)),
           child: const Icon(
@@ -42,7 +44,8 @@ class TaskWidget extends StatelessWidget {
       title: Text(
         task.title,
         style: TextStyle(
-          color: task.isCompleted ? MyColors.primaryColor : Colors.black,
+          color:
+              task.isCompleted ? Theme.of(context).primaryColor : Colors.black,
           fontWeight: FontWeight.w500,
           decoration: task.isCompleted ? TextDecoration.lineThrough : null,
         ),
@@ -54,7 +57,7 @@ class TaskWidget extends StatelessWidget {
             task.subtitle,
             style: TextStyle(
               color: task.isCompleted
-                  ? MyColors.primaryColor
+                  ? Theme.of(context).colorScheme.primary
                   : const Color.fromARGB(255, 164, 164, 164),
               fontWeight: FontWeight.w300,
               decoration: task.isCompleted ? TextDecoration.lineThrough : null,

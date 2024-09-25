@@ -2,7 +2,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:todo_app/models/task_model.dart';
 
 class SupabaseTasksRepository {
-   Future<List<Task>> fetchTasks() async {
+  Future<List<Task>> fetchTasks() async {
     final supabase = Supabase.instance.client;
     final response = await supabase.from('tasks').select();
     return response.map((task) => Task.fromMap(task)).toList();

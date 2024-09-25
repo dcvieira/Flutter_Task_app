@@ -8,15 +8,15 @@ class TaskProvider with ChangeNotifier {
   List<Task> _tasks = [];
   List<Task> get tasks => _tasks;
 
-  int get totalTasksDone => _tasks.where((t) =>  t.isCompleted).length;
+  int get totalTasksDone => _tasks.where((t) => t.isCompleted).length;
 
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-   String? _errorMessage;
+  String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
-   void _setErrorMessage([String? message]) {
+  void _setErrorMessage([String? message]) {
     _errorMessage = message;
     notifyListeners();
   }
@@ -26,21 +26,20 @@ class TaskProvider with ChangeNotifier {
     notifyListeners();
     try {
       _tasks = await _taskRepo.fetchTasks();
-        _setErrorMessage();
+      _setErrorMessage();
     } catch (e) {
-       _setErrorMessage('Erro ao buscar tarefas: $e');
+      _setErrorMessage('Erro ao buscar tarefas: $e');
     } finally {
       _isLoading = false;
       notifyListeners();
     }
   }
 
-
   Future<void> addTask(Task task) async {
     try {
       await _taskRepo.createTask(task);
       _tasks.add(task);
-       _setErrorMessage();
+      _setErrorMessage();
       notifyListeners();
     } catch (e) {
       _setErrorMessage('Erro ao adicionar tarefa: $e');
@@ -54,21 +53,21 @@ class TaskProvider with ChangeNotifier {
       _setErrorMessage();
       notifyListeners();
     } catch (e) {
-      _setErrorMessage('Erro ao excluir tarefa: $e');
+      _setErrorMessage('Erro ao excluir tarefa');
     }
   }
 
-    Future<void> updateTask(Task task) async {
+  Future<void> updateTask(Task task) async {
     try {
       await _taskRepo.updateTask(task);
       final index = _tasks.indexWhere((t) => t.id == task.id);
       if (index != -1) {
         _tasks[index] = task;
-         _setErrorMessage();
+        _setErrorMessage();
         notifyListeners();
       }
     } catch (e) {
-     _setErrorMessage('Erro ao atualizar tarefa: $e');
+      _setErrorMessage('Erro ao atualizar tarefa');
     }
   }
 }
