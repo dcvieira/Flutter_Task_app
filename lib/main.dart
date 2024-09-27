@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:todo_app/models/task_group.dart';
+import 'package:todo_app/pages/taskGroup/task_group_list_page.dart';
 import 'package:todo_app/pages/taskList/task_list_page.dart';
 import 'package:todo_app/providers/task_provider.dart';
 
@@ -9,13 +11,12 @@ Future<void> main() async {
 
   await Supabase.initialize(
     url: '',
-    anonKey:
-        '',
+    anonKey: '',
   );
-  runApp(MultiProvider( 
+  runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(
-        create: (_) => TaskProvider()..fetchTasks(),
+        create: (_) => TaskProvider()..fetchTasksGroupWithCounts(),
       ),
     ],
     child: const MyApp(),
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const TaskListPage(),
+      home: const TaskGroupListPage(),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app/models/task_group.dart';
 import 'package:todo_app/models/task_model.dart';
 import 'package:todo_app/repository/supabase_tasks_repository.dart';
 
@@ -7,6 +8,9 @@ class TaskProvider with ChangeNotifier {
 
   List<Task> _tasks = [];
   List<Task> get tasks => _tasks;
+
+  List<TaskGroupWithCounts> _taskGroupsWithCounts = [];
+  List<TaskGroupWithCounts> get taskGroupsWithCounts => _taskGroupsWithCounts;
 
   int get totalTasksDone => _tasks.where((t) => t.isCompleted).length;
 
@@ -26,6 +30,20 @@ class TaskProvider with ChangeNotifier {
     notifyListeners();
     try {
       _tasks = await _taskRepo.fetchTasks();
+      _setErrorMessage();
+    } catch (e) {
+      _setErrorMessage('Erro ao buscar tarefas: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> fetchTasksGroupWithCounts() async {
+    _isLoading = true;
+    notifyListeners();
+    try {
+      _taskGroupsWithCounts = await _taskRepo.getTaskGroupsWithCounts();
       _setErrorMessage();
     } catch (e) {
       _setErrorMessage('Erro ao buscar tarefas: $e');

@@ -1,4 +1,5 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:todo_app/models/task_group.dart';
 import 'package:todo_app/models/task_model.dart';
 
 class SupabaseTasksRepository {
@@ -21,5 +22,36 @@ class SupabaseTasksRepository {
   Future deleteTask(String taskId) async {
     final supabase = Supabase.instance.client;
     await supabase.from('tasks').delete().eq('id', taskId);
+  }
+
+  Future<List<TaskGroupWithCounts>> getTaskGroupsWithCounts() async {
+    final supabase = Supabase.instance.client;
+    final taskGroups = await supabase.from('task_groups').select('''
+        id,
+        name,
+        color,
+        icon,
+        tasks (
+          id,
+          is_completed
+        )
+      ''');
+
+    final List<TaskGroupWithCounts> taskGroupsWithCounts =
+        taskGroups.map((taskGroup) {
+      final tasks = taskGroup['tasks'] as List<Map<String, dynamic>>;
+      final completedTasks = tasks.where((task) => task['is_completed']).length;
+      final totalTasks = tasks.length;
+      return TaskGroupWithCounts(
+        id: taskGroup['id'],
+        name: taskGroup['name'],
+        color: taskGroup['color'],
+        icon: taskGroup['icon'],
+        completedTasks: completedTasks,
+        totalTasks: totalTasks,
+      );
+    }).toList();
+
+    return taskGroupsWithCounts;
   }
 }

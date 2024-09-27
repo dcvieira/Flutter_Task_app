@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/models/task_model.dart';
@@ -19,8 +18,7 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
   final subtitleController = TextEditingController();
   bool editMode = false;
   String pageTitle = '';
-
-  DateTime? date;
+  DateTime date = DateTime.now();
 
   @override
   void initState() {
@@ -29,6 +27,7 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
     if (editMode) {
       titleController.text = widget.task!.title;
       subtitleController.text = widget.task!.subtitle;
+      date = widget.task!.date;
     }
     super.initState();
   }
@@ -40,15 +39,20 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
         title: Text(pageTitle),
       ),
       body: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              _buildTitle(),
-              _buildSubtitle(),
-              _buildDatePicker(),
-              _buildButton(),
-            ],
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                _buildTitle(),
+                const SizedBox(height: 20),
+                _buildSubtitle(),
+                const SizedBox(height: 20),
+                _buildDatePicker(),
+                _buildButton(),
+              ],
+            ),
           ),
         ),
       ),
@@ -72,9 +76,9 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
               date: date,
             );
             await taskProvider.updateTask(taskForEdit);
-
           } else {
-            final newTask = Task.create(title: title, subtitle: subtitle, date: date);
+            final newTask =
+                Task.create(title: title, subtitle: subtitle, date: date);
             await taskProvider.addTask(newTask);
           }
 
@@ -99,9 +103,10 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
         }
         return null;
       },
+      maxLines: 5,
       controller: subtitleController,
       decoration: const InputDecoration(
-          border: OutlineInputBorder(), label: Text('Title')),
+          border: UnderlineInputBorder(), label: Text('SubTitle')),
     );
   }
 
@@ -114,9 +119,8 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
         return null;
       },
       controller: titleController,
-      maxLines: 6,
       decoration: const InputDecoration(
-          border: OutlineInputBorder(), label: Text('Title')),
+          border: UnderlineInputBorder(), label: Text('Title')),
     );
   }
 
@@ -127,14 +131,15 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
             context: context,
             firstDate: DateTime(2000, 3, 5),
             lastDate: DateTime(2030, 3, 5));
-        setState(() {
-          date = selectedDate;
-        });
+        if (selectedDate != null) {
+          setState(() {
+            date = selectedDate;
+          });
+        }
 
         FocusManager.instance.primaryFocus?.unfocus();
       },
       child: Container(
-        margin: const EdgeInsets.fromLTRB(20, 10, 20, 10),
         width: double.infinity,
         height: 55,
         decoration: BoxDecoration(
@@ -157,9 +162,7 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
                   borderRadius: BorderRadius.circular(10),
                   color: Colors.grey.shade100),
               child: Center(
-                child: Text(DateFormat.yMMMEd()
-                    .format(date ?? DateTime.now())
-                    .toString()),
+                child: Text(DateFormat.yMMMEd().format(date).toString()),
               ),
             )
           ],

@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:todo_app/models/task_model.dart';
 import 'package:todo_app/pages/taskCreate/task_create_page.dart';
 import 'package:todo_app/providers/task_provider.dart';
-import 'package:todo_app/utils/colors.dart';
 
 class TaskWidget extends StatelessWidget {
   const TaskWidget({super.key, required this.task});
@@ -44,8 +43,8 @@ class TaskWidget extends StatelessWidget {
       title: Text(
         task.title,
         style: TextStyle(
-          color:
-              task.isCompleted ? Theme.of(context).primaryColor : Colors.black,
+          // color:
+          //     task.isCompleted ? Theme.of(context).primaryColor : Colors.black,
           fontWeight: FontWeight.w500,
           decoration: task.isCompleted ? TextDecoration.lineThrough : null,
         ),
@@ -55,13 +54,13 @@ class TaskWidget extends StatelessWidget {
         children: [
           Text(
             task.subtitle,
-            style: TextStyle(
-              color: task.isCompleted
-                  ? Theme.of(context).colorScheme.primary
-                  : const Color.fromARGB(255, 164, 164, 164),
-              fontWeight: FontWeight.w300,
-              decoration: task.isCompleted ? TextDecoration.lineThrough : null,
-            ),
+            // style: TextStyle(
+            //   color: task.isCompleted
+            //       ? Theme.of(context).colorScheme.primary
+            //       : const Color.fromARGB(255, 164, 164, 164),
+            //   fontWeight: FontWeight.w300,
+            //   decoration: task.isCompleted ? TextDecoration.lineThrough : null,
+            // ),
           ),
 
           /// Date & Time of Task
