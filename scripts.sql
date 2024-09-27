@@ -1,5 +1,10 @@
 
-
+CREATE TABLE IF NOT EXISTS task_groups (
+  id UUID PRIMARY KEY,
+  name TEXT NOT NULL,
+  color INTEGER NOT NULL,
+  icon INTEGER NOT NULL
+);
 
 CREATE TABLE IF NOT EXISTS tasks (
   id UUID PRIMARY KEY,
@@ -16,9 +21,9 @@ CREATE TABLE IF NOT EXISTS tasks (
 
 
 INSERT INTO task_groups (id, name, color, icon) VALUES
-  ('1f1a7311-36f8-4fd3-bc4c-3fa3e25e8ef2', 'Work', 16711680, 3595),  -- Red color (hex: #FF0000), icon 0xe0b -> 3595
-  ('1a5b6c7d-2e3f-4a5b-8c7d-8f9e0a1b2c3d', 'Personal', 65280, 3858), -- Green color (hex: #00FF00), icon 0xf12 -> 3858
-  ('5d2e4c6f-7e5d-3a4b-1c2d-0a9b8f7e6c5d', 'Shopping', 255, 3679);   -- Blue color (hex: #0000FF), icon 0xe5f -> 3679
+  ('1f1a7311-36f8-4fd3-bc4c-3fa3e25e8ef2', 'Work', 4280391411, 59122),  
+  ('1a5b6c7d-2e3f-4a5b-8c7d-8f9e0a1b2c3d', 'Personal', 4282339765, 58513), 
+  ('5d2e4c6f-7e5d-3a4b-1c2d-0a9b8f7e6c5d', 'Shopping', 4294198070, 3595);
 
 
 

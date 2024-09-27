@@ -25,11 +25,11 @@ class TaskProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchTasks() async {
-    _isLoading = true;
-    notifyListeners();
+  Future<void> fetchTasks(String groupId) async {
+  _isLoading = true;
+    //notifyListeners();
     try {
-      _tasks = await _taskRepo.fetchTasks();
+      _tasks = await _taskRepo.fetchTasksByGroup(groupId);
       _setErrorMessage();
     } catch (e) {
       _setErrorMessage('Erro ao buscar tarefas: $e');

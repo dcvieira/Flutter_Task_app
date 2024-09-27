@@ -7,7 +7,8 @@ import 'package:todo_app/pages/taskList/widgets/tasks_summary_widget.dart';
 import 'package:todo_app/providers/task_provider.dart';
 
 class TaskListPage extends StatefulWidget {
-  const TaskListPage({super.key});
+  final String groupId;
+  const TaskListPage({super.key, required this.groupId});
 
   @override
   State<TaskListPage> createState() => _TaskListPageState();
@@ -17,17 +18,18 @@ class _TaskListPageState extends State<TaskListPage> {
   @override
   void initState() {
     final provider = context.read<TaskProvider>();
-    provider.addListener(
-      () {
-        if (provider.errorMessage != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(provider.errorMessage!),
-            ),
-          );
-        }
-      },
-    );
+    provider.fetchTasks(widget.groupId);
+    // provider.addListener(
+    //   () {
+    //     if (provider.errorMessage != null) {
+    //       ScaffoldMessenger.of(context).showSnackBar(
+    //         SnackBar(
+    //           content: Text(provider.errorMessage!),
+    //         ),
+    //       );
+    //     }
+    //   },
+    // );
     super.initState();
   }
 

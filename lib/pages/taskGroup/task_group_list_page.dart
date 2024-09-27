@@ -44,7 +44,7 @@ class _TaskGroupListPageState extends State<TaskGroupListPage> {
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute<void>(
-                    builder: (BuildContext context) => TaskListPage(),
+                    builder: (BuildContext context) => TaskListPage(groupId: taskGroup.id,),
                   ),
                 );
               },

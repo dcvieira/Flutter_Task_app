@@ -3,9 +3,9 @@ import 'package:todo_app/models/task_group.dart';
 import 'package:todo_app/models/task_model.dart';
 
 class SupabaseTasksRepository {
-  Future<List<Task>> fetchTasks() async {
+  Future<List<Task>> fetchTasksByGroup(String groupId) async {
     final supabase = Supabase.instance.client;
-    final response = await supabase.from('tasks').select();
+    final response = await supabase.from('tasks').select().eq('task_group_id', groupId);
     return response.map((task) => Task.fromMap(task)).toList();
   }
 
@@ -39,7 +39,7 @@ class SupabaseTasksRepository {
 
     final List<TaskGroupWithCounts> taskGroupsWithCounts =
         taskGroups.map((taskGroup) {
-      final tasks = taskGroup['tasks'] as List<Map<String, dynamic>>;
+      final tasks = taskGroup['tasks'] as List;
       final completedTasks = tasks.where((task) => task['is_completed']).length;
       final totalTasks = tasks.length;
       return TaskGroupWithCounts(
