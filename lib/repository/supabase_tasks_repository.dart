@@ -5,7 +5,14 @@ import 'package:todo_app/models/task_model.dart';
 class SupabaseTasksRepository {
   Future<List<Task>> fetchTasksByGroup(String groupId) async {
     final supabase = Supabase.instance.client;
-    final response = await supabase.from('tasks').select().eq('task_group_id', groupId);
+    final response =
+        await supabase.from('tasks').select().eq('task_group_id', groupId);
+    return response.map((task) => Task.fromMap(task)).toList();
+  }
+
+  Future<List<Task>> fetchTasksByDate(DateTime date) async {
+    final supabase = Supabase.instance.client;
+    final response = await supabase.from('tasks').select().gte('date', date);
     return response.map((task) => Task.fromMap(task)).toList();
   }
 
