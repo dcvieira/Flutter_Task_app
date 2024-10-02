@@ -12,7 +12,7 @@ class SupabaseTasksRepository {
 
   Future<List<Task>> fetchTasksByDate(DateTime date) async {
     final supabase = Supabase.instance.client;
-    final response = await supabase.from('tasks').select().gte('date', date);
+    final response = await supabase.from('tasks').select().eq('date', date);
     return response.map((task) => Task.fromMap(task)).toList();
   }
 
@@ -37,7 +37,6 @@ class SupabaseTasksRepository {
         id,
         name,
         color,
-        icon,
         tasks (
           id,
           is_completed
@@ -50,10 +49,7 @@ class SupabaseTasksRepository {
       final completedTasks = tasks.where((task) => task['is_completed']).length;
       final totalTasks = tasks.length;
       return TaskGroupWithCounts(
-        id: taskGroup['id'],
-        name: taskGroup['name'],
-        color: taskGroup['color'],
-        icon: taskGroup['icon'],
+        taskGroup: TaskGroup.fromMap(taskGroup),
         completedTasks: completedTasks,
         totalTasks: totalTasks,
       );
@@ -69,7 +65,10 @@ class SupabaseTasksRepository {
 
   Future updateTaskGroup(TaskGroup taskGroup) async {
     final supabase = Supabase.instance.client;
-    await supabase.from('task_groups').update(taskGroup.toMap()).eq('id', taskGroup.id);
+    await supabase
+        .from('task_groups')
+        .update(taskGroup.toMap())
+        .eq('id', taskGroup.id);
   }
 
   Future deleteTaskGroup(String taskGroupId) async {

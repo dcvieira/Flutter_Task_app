@@ -12,6 +12,8 @@ class TaskProvider with ChangeNotifier {
   List<TaskGroupWithCounts> _taskGroupsWithCounts = [];
   List<TaskGroupWithCounts> get taskGroupsWithCounts => _taskGroupsWithCounts;
 
+  TaskGroup? selectedTaskGroup;
+
   int get totalTasksDone => _tasks.where((t) => t.isCompleted).length;
 
   bool _isLoading = false;
@@ -82,22 +84,17 @@ class TaskProvider with ChangeNotifier {
       if (index != -1) {
         _tasks[index] = task;
         _setErrorMessage();
-        notifyListeners();
       }
     } catch (e) {
       _setErrorMessage('Erro ao atualizar tarefa');
     }
   }
 
-  Future<void> createTaskGroup(
-      TaskGroup taskGroup) async {
+  Future<void> createTaskGroup(TaskGroup taskGroup) async {
     try {
       await _taskRepo.createTaskGroup(taskGroup);
       _taskGroupsWithCounts.add(TaskGroupWithCounts(
-        id: taskGroup.id,
-        name: taskGroup.name,
-        icon: taskGroup.icon,
-        color: taskGroup.color,
+        taskGroup: taskGroup,
         totalTasks: 0,
         completedTasks: 0,
       ));
@@ -107,15 +104,30 @@ class TaskProvider with ChangeNotifier {
     }
   }
 
-    Future<void> deleteTaskGroup(String id) async {
+  Future<void> updateTaskGroup(TaskGroup taskGroup) async {
+    try {
+      await _taskRepo.updateTaskGroup(taskGroup);
+
+      final index = _taskGroupsWithCounts
+          .indexWhere((t) => t.taskGroup.id == taskGroup.id);
+      if (index != -1) {
+        _taskGroupsWithCounts[index].taskGroup = taskGroup;
+        selectedTaskGroup = taskGroup;
+        _setErrorMessage();
+      }
+    } catch (e) {
+      _setErrorMessage('Erro ao criar grupo de tarefas');
+    }
+  }
+
+  Future<void> deleteTaskGroup(String id) async {
     try {
       await _taskRepo.deleteTaskGroup(id);
-      _taskGroupsWithCounts.removeWhere((task) => task.id == id);
+      _taskGroupsWithCounts.removeWhere((task) => task.taskGroup.id == id);
       _setErrorMessage();
       notifyListeners();
     } catch (e) {
       _setErrorMessage('Erro ao excluir tarefa');
     }
   }
-
 }

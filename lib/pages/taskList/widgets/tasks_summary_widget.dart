@@ -15,13 +15,13 @@ class TasksSummaryWidget extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          /// CircularProgressIndicator
           SizedBox(
             width: 35,
             height: 35,
             child: CircularProgressIndicator(
               strokeWidth: 5,
-              valueColor: const AlwaysStoppedAnimation(Colors.blueAccent),
+              valueColor: AlwaysStoppedAnimation(
+                  Color(taskProvider.selectedTaskGroup!.color)),
               backgroundColor: Colors.grey,
               value: taskProvider.tasks.isNotEmpty
                   ? (taskProvider.totalTasksDone / taskProvider.tasks.length)
@@ -38,7 +38,7 @@ class TasksSummaryWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'My Tasks',
+                taskProvider.selectedTaskGroup!.name,
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
               const SizedBox(

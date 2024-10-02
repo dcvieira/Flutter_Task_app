@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_app/models/task_model.dart';
 import 'package:todo_app/pages/taskCreate/task_create_page.dart';
+import 'package:todo_app/pages/taskGroupCreate/task_group_create_page.dart';
 import 'package:todo_app/pages/taskList/widgets/task_widget.dart';
 import 'package:todo_app/pages/taskList/widgets/tasks_summary_widget.dart';
 import 'package:todo_app/providers/task_provider.dart';
 
 class TaskListPage extends StatefulWidget {
-  final String groupId;
-  const TaskListPage({super.key, required this.groupId});
+  const TaskListPage({super.key});
 
   @override
   State<TaskListPage> createState() => _TaskListPageState();
 }
 
 class _TaskListPageState extends State<TaskListPage> {
+  late final TaskProvider taskProvider;
   @override
   void initState() {
-    final provider = context.read<TaskProvider>();
-    provider.fetchTasks(widget.groupId);
+    taskProvider = context.read<TaskProvider>();
+    taskProvider.fetchTasks(taskProvider.selectedTaskGroup!.id);
     // provider.addListener(
     //   () {
     //     if (provider.errorMessage != null) {
@@ -36,11 +36,27 @@ class _TaskListPageState extends State<TaskListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                    builder: (BuildContext context) => TaskGroupCreatePage(
+                          taskGroupForEdit: taskProvider.selectedTaskGroup,
+                        )),
+              );
+            },
+            icon: const Icon(Icons.edit),
+          ),
+        ],
+      ),
       body: Consumer<TaskProvider>(builder: (context, taskProvider, _) {
         if (taskProvider.isLoading) {
-          return const Center(
-            child: CircularProgressIndicator(),
+          return Center(
+            child: CircularProgressIndicator(
+              color: Color(taskProvider.selectedTaskGroup!.color),
+            ),
           );
         }
         return Column(
@@ -65,6 +81,32 @@ class _TaskListPageState extends State<TaskListPage> {
                       onDismissed: (direction) {
                         taskProvider.deleteTask(task.id);
                       },
+                      confirmDismiss: (direction) {
+                        return showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              title: const Text('Delete Task'),
+                              content: const Text(
+                                  'Are you sure you want to delete this task?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(false);
+                                  },
+                                  child: const Text('No'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.of(context).pop(true);
+                                  },
+                                  child: const Text('Yes'),
+                                ),
+                              ],
+                            );
+                          },
+                        );
+                      },
                       key: Key(task.id),
                       background: const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -82,7 +124,10 @@ class _TaskListPageState extends State<TaskListPage> {
                               ))
                         ],
                       ),
-                      child: TaskWidget(task: task));
+                      child: TaskWidget(
+                        task: task,
+                        color: Color(taskProvider.selectedTaskGroup!.color),
+                      ));
                 },
               ),
             ),
@@ -93,7 +138,8 @@ class _TaskListPageState extends State<TaskListPage> {
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute<void>(
-              builder: (BuildContext context) =>  TaskCreatePage(groupId: widget.groupId),
+              builder: (BuildContext context) =>
+                  TaskCreatePage(groupId: taskProvider.selectedTaskGroup!.id),
             ),
           );
         },

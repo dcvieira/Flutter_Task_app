@@ -5,17 +5,14 @@ import 'package:todo_app/repository/supabase_tasks_repository.dart';
 class DailyTaskProvider with ChangeNotifier {
   final SupabaseTasksRepository _taskRepo = SupabaseTasksRepository();
 
-  // DateTime _selectedDate = DateTime.now();
-  // DateTime get selectedDate => _selectedDate;
-
-  // void selectDate(DateTime date) {
-  //   _selectedDate = date;
-  //   notifyListeners();
-  //   //await fetchDailyTasks();
-  // }
+  DateTime _selectedDate = DateTime.now();
+  DateTime get selectedDate => _selectedDate;
 
   List<Task> _tasks = [];
   List<Task> get tasks => _tasks;
+
+  List<DateTime> _datesInMonth = [];
+  List<DateTime> get datesInMonth => _datesInMonth;
 
   int get totalTasksDone => _tasks.where((t) => t.isCompleted).length;
 
@@ -28,6 +25,26 @@ class DailyTaskProvider with ChangeNotifier {
   void _setErrorMessage([String? message]) {
     _errorMessage = message;
     notifyListeners();
+  }
+
+  Future<void> selectDate(DateTime date) async {
+    _selectedDate = DateUtils.dateOnly(date);
+    _setDatesInMonth(_selectedDate);
+    await fetchDailyTasks(_selectedDate);
+  }
+
+  void _setDatesInMonth(DateTime selectedDate) {
+    List<DateTime> dates = [];
+    DateTime firstDay = DateTime(selectedDate.year, selectedDate.month, 1);
+    DateTime lastDay = DateTime(selectedDate.year, selectedDate.month + 1, 0);
+
+    for (DateTime date = firstDay;
+        date.isBefore(lastDay);
+        date = date.add(const Duration(days: 1))) {
+      dates.add(date);
+    }
+
+    _datesInMonth = dates;
   }
 
   Future<void> fetchDailyTasks(DateTime date) async {

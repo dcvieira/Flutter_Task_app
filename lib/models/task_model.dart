@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
 class Task {
@@ -66,7 +67,7 @@ class Task {
       'id': id,
       'title': title,
       'subtitle': subtitle,
-      'date': date.toIso8601String(),
+      'date': DateUtils.dateOnly(date).toIso8601String(),
       'is_completed': isCompleted,
       'task_group_id': groupId,
     };

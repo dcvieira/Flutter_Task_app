@@ -6,8 +6,9 @@ import 'package:todo_app/pages/taskCreate/task_create_page.dart';
 import 'package:todo_app/providers/task_provider.dart';
 
 class TaskWidget extends StatelessWidget {
-  const TaskWidget({super.key, required this.task});
+  const TaskWidget({super.key, required this.task, required this.color});
   final Task task;
+  final Color color;
 
   @override
   Widget build(BuildContext context) {
@@ -30,9 +31,7 @@ class TaskWidget extends StatelessWidget {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 600),
           decoration: BoxDecoration(
-              color: task.isCompleted
-                  ? Theme.of(context).colorScheme.primary
-                  : Colors.white,
+              color: task.isCompleted ? color : Colors.white,
               shape: BoxShape.circle,
               border: Border.all(color: Colors.grey, width: .8)),
           child: const Icon(

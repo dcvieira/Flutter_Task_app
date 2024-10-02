@@ -22,7 +22,7 @@ Future<void> main() async {
         create: (_) => TaskProvider(),
       ),
       ChangeNotifierProvider(
-        create: (_) => DailyTaskProvider(),
+        create: (_) => DailyTaskProvider()..selectDate(DateTime.now()),
       ),
     ],
     child: const MyApp(),

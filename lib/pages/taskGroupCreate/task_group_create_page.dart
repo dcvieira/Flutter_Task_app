@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/models/task_group.dart';
 import 'package:todo_app/providers/task_provider.dart';
 
 class TaskGroupCreatePage extends StatefulWidget {
-  const TaskGroupCreatePage({super.key});
+  const TaskGroupCreatePage({super.key, this.taskGroupForEdit});
+  final TaskGroup? taskGroupForEdit;
 
   @override
   State<TaskGroupCreatePage> createState() => _TaskGroupCreatePageState();
@@ -16,6 +16,18 @@ class _TaskGroupCreatePageState extends State<TaskGroupCreatePage> {
   IconData iconData = Icons.add;
   Color selectedColor = Colors.red;
   final formKey = GlobalKey<FormState>();
+  bool editMode = false;
+
+  @override
+  void initState() {
+    editMode = widget.taskGroupForEdit != null;
+    if (editMode) {
+      final taskGroup = widget.taskGroupForEdit!;
+      nameController.text = taskGroup.name;
+      selectedColor = Color(taskGroup.color);
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +41,6 @@ class _TaskGroupCreatePageState extends State<TaskGroupCreatePage> {
             child: Column(
               children: [
                 _buildNameField(),
-                _buildIconField(),
                 _buildColorField(),
                 _buildSaveButton(),
               ],
@@ -46,16 +57,6 @@ class _TaskGroupCreatePageState extends State<TaskGroupCreatePage> {
           return 'Name is required';
         }
         return null;
-      },
-    );
-  }
-
-  Widget _buildIconField() {
-    return ListTile(
-      title: const Text('Icon'),
-      leading: Icon(iconData),
-      onTap: () {
-        // pickIcon();
       },
     );
   }
@@ -93,7 +94,7 @@ class _TaskGroupCreatePageState extends State<TaskGroupCreatePage> {
                   color: color,
                   shape: BoxShape.circle,
                   border: Border.all(
-                    color: color == selectedColor
+                    color: color.value == selectedColor.value
                         ? Colors.black
                         : Colors.transparent,
                     width: 2,
@@ -101,7 +102,7 @@ class _TaskGroupCreatePageState extends State<TaskGroupCreatePage> {
                 ),
                 height: 50,
                 width: 50,
-                child: color == selectedColor
+                child: color.value == selectedColor.value
                     ? const Icon(Icons.check, color: Colors.white)
                     : null,
               ),
@@ -116,14 +117,24 @@ class _TaskGroupCreatePageState extends State<TaskGroupCreatePage> {
         if (!formKey.currentState!.validate()) {
           return;
         }
+        final taskProvider = context.read<TaskProvider>();
 
-        final taskGroup = TaskGroup.create(
-          name: nameController.text,
-          icon: iconData.codePoint,
-          color: selectedColor.value,
-        );
+        if (editMode) {
+          final taskGroup = widget.taskGroupForEdit!.copyWith(
+            name: nameController.text,
+            color: selectedColor.value,
+          );
 
-        await context.read<TaskProvider>().createTaskGroup(taskGroup);
+          await taskProvider.updateTaskGroup(taskGroup);
+        } else {
+          final taskGroup = TaskGroup.create(
+            name: nameController.text,
+            color: selectedColor.value,
+          );
+
+          await taskProvider.createTaskGroup(taskGroup);
+        }
+
         if (mounted) {
           Navigator.of(context).pop();
         }
@@ -131,19 +142,4 @@ class _TaskGroupCreatePageState extends State<TaskGroupCreatePage> {
       child: const Text('Save'),
     );
   }
-
-  // Future<void> pickIcon() async {
-  //   final icon = await showIconPicker(
-  //     context,
-  //     configuration: const SinglePickerConfiguration(
-  //       adaptiveDialog: true,
-  //     ),
-  //   );
-
-  //   if (icon != null) {
-  //     setState(() {
-  //       iconData = icon.data;
-  //     });
-  //   }
-  // }
 }

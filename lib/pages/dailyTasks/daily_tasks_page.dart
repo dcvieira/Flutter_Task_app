@@ -12,33 +12,38 @@ class DailyTasksPage extends StatefulWidget {
 }
 
 class _DailyTasksPageState extends State<DailyTasksPage> {
-  DateTime selectedDate = DateTime.now();
-  late DailyTaskProvider dailyTaskProvider;
-
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      dailyTaskProvider = context.read<DailyTaskProvider>()
-        ..fetchDailyTasks(selectedDate);
-    });
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+    final dailyTaskProvider = context.read<DailyTaskProvider>();
     return Scaffold(
       appBar: AppBar(
         title: const Text('Daily Tasks'),
+        actions: [
+          // add a icon to open a caledar to select date
+          IconButton(
+            onPressed: () async {
+              final DateTime? date = await showDatePicker(
+                context: context,
+                initialDate: dailyTaskProvider.selectedDate,
+                firstDate: DateTime(2000),
+                lastDate: DateTime(2100),
+              );
+              if (date != null) {
+                dailyTaskProvider.selectDate(date);
+              }
+            },
+            icon: const Icon(Icons.calendar_today),
+          ),
+        ],
       ),
       body: Column(
         children: [
-          TaskCalendar(
-            selectedDate: selectedDate,
-            onDateChanged: (date) {
-              dailyTaskProvider.fetchDailyTasks(date);
-            },
-          ),
+          const TaskCalendar(),
           Expanded(
             child: Consumer<DailyTaskProvider>(builder: (context, provider, _) {
               if (provider.isLoading) {

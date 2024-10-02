@@ -1,44 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_app/providers/daily_task_provider.dart';
 
-class TaskCalendar extends StatefulWidget {
-  final DateTime selectedDate;
-  final Function(DateTime date)? onDateChanged;
-  const TaskCalendar(
-      {super.key, required this.selectedDate, this.onDateChanged});
-
-  @override
-  State<TaskCalendar> createState() => _TaskCalendarState();
-}
-
-class _TaskCalendarState extends State<TaskCalendar> {
-  late DateTime selectedDate;
-
-  @override
-  void initState() {
-    selectedDate = widget.selectedDate;
-    super.initState();
-  }
+class TaskCalendar extends StatelessWidget {
+  const TaskCalendar({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final dates = _getDatesInMonth(selectedDate);
-    final selectedDateOnly = DateUtils.dateOnly(selectedDate);
+    final dailyTaskProvider = context.watch<DailyTaskProvider>();
 
     return SizedBox(
       height: 80,
       width: double.infinity,
       child: ListView.builder(
           scrollDirection: Axis.horizontal,
-          itemCount: dates.length,
+          itemCount: dailyTaskProvider.datesInMonth.length,
           itemBuilder: (context, index) {
-            final date = DateUtils.dateOnly(dates[index]);
+            final date =
+                DateUtils.dateOnly(dailyTaskProvider.datesInMonth[index]);
             return GestureDetector(
               onTap: () {
-                setState(() {
-                  selectedDate = date;
-                });
-                widget.onDateChanged?.call(date);
+                dailyTaskProvider.selectDate(date);
               },
               child: Container(
                 padding:
@@ -61,7 +44,7 @@ class _TaskCalendarState extends State<TaskCalendar> {
                     Text(
                       DateFormat('EEE').format(date),
                     ),
-                    date == selectedDateOnly
+                    date == dailyTaskProvider.selectedDate
                         ? Container(
                             margin: const EdgeInsets.only(top: 8),
                             width: 25,
@@ -84,19 +67,5 @@ class _TaskCalendarState extends State<TaskCalendar> {
             );
           }),
     );
-  }
-
-  List<DateTime> _getDatesInMonth(DateTime selectedDate) {
-    List<DateTime> dates = [];
-    DateTime firstDay = DateTime(selectedDate.year, selectedDate.month, 1);
-    DateTime lastDay = DateTime(selectedDate.year, selectedDate.month + 1, 0);
-
-    for (DateTime date = firstDay;
-        date.isBefore(lastDay);
-        date = date.add(const Duration(days: 1))) {
-      dates.add(date);
-    }
-
-    return dates;
   }
 }

@@ -5,7 +5,7 @@ import 'package:todo_app/models/task_model.dart';
 import 'package:todo_app/providers/task_provider.dart';
 
 class TaskCreatePage extends StatefulWidget {
-  const TaskCreatePage({super.key, required this.groupId,  this.task});
+  const TaskCreatePage({super.key, required this.groupId, this.task});
   final String groupId;
   final Task? task;
 
@@ -78,8 +78,11 @@ class _TaskCreatePageState extends State<TaskCreatePage> {
             );
             await taskProvider.updateTask(taskForEdit);
           } else {
-            final newTask =
-                Task.create(title: title, subtitle: subtitle, date: date, groupId: widget.groupId);
+            final newTask = Task.create(
+                title: title,
+                subtitle: subtitle,
+                date: date,
+                groupId: widget.groupId);
             await taskProvider.addTask(newTask);
           }
 
