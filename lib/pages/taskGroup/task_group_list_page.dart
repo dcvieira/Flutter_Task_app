@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/models/task_group.dart';
 import 'package:todo_app/models/task_model.dart';
+import 'package:todo_app/pages/taskGroup/widgets/task_group_item.dart';
 import 'package:todo_app/pages/taskGroupCreate/task_group_create_page.dart';
 import 'package:todo_app/pages/taskList/task_list_page.dart';
 import 'package:todo_app/providers/task_provider.dart';
@@ -35,33 +36,30 @@ class _TaskGroupListPageState extends State<TaskGroupListPage> {
             itemCount: taskProvider.taskGroupsWithCounts.length,
             itemBuilder: (context, index) {
               final taskGroup = taskProvider.taskGroupsWithCounts[index];
-              return ListTile(
-                title: Text(taskGroup.name),
-                leading: CircleAvatar(
-                  backgroundColor: Color(taskGroup.color),
-                  child: Icon(
-                    IconData(taskGroup.icon, fontFamily: 'MaterialIcons'),
-                    color: Colors.white,
-                  ),
-                ),
-                trailing: CircularProgressIndicator(
-                  strokeWidth: 5,
-                  valueColor: AlwaysStoppedAnimation(Color(taskGroup.color)),
-                  backgroundColor: Colors.grey,
-                  value: taskGroup.totalTasks > 0
-                      ? (taskGroup.completedTasks / taskGroup.totalTasks)
-                      : 0,
-                ),
-                onTap: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (BuildContext context) => TaskListPage(
-                        groupId: taskGroup.id,
+              return Dismissible(
+                  onDismissed: (direction) async {
+                    await context
+                        .read<TaskProvider>()
+                        .deleteTaskGroup(taskGroup.id);
+                  },
+                  background: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.delete_outline,
+                        color: Colors.grey,
                       ),
-                    ),
-                  );
-                },
-              );
+                      SizedBox(
+                        width: 8,
+                      ),
+                      Text('Delete Task Group',
+                          style: TextStyle(
+                            color: Colors.grey,
+                          ))
+                    ],
+                  ),
+                  key: Key(taskGroup.id),
+                  child: TaskGroupItem(taskGroup: taskGroup));
             },
           );
         },

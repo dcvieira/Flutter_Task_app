@@ -6,19 +6,23 @@ class Task {
   final String subtitle;
   final DateTime date;
   final bool isCompleted;
+  final String groupId;
 
-  Task(
-      {required this.id,
-      required this.title,
-      required this.subtitle,
-      required this.date,
-      required this.isCompleted});
+  Task({
+    required this.id,
+    required this.title,
+    required this.subtitle,
+    required this.date,
+    required this.isCompleted,
+    required this.groupId,
+  });
 
   factory Task.create({
     required String title,
     String? subtitle,
     DateTime? date,
     bool isCompleted = false,
+    required String groupId,
   }) =>
       Task(
         id: const Uuid().v1(),
@@ -26,6 +30,7 @@ class Task {
         subtitle: subtitle ?? '',
         date: date ?? DateTime.now(),
         isCompleted: isCompleted,
+        groupId: groupId,
       );
 
   Task copyWith({
@@ -34,6 +39,7 @@ class Task {
     String? subtitle,
     DateTime? date,
     bool? isCompleted,
+    String? groupId,
   }) =>
       Task(
         id: id ?? this.id,
@@ -41,6 +47,7 @@ class Task {
         subtitle: subtitle ?? this.subtitle,
         date: date ?? this.date,
         isCompleted: isCompleted ?? this.isCompleted,
+        groupId: groupId ?? this.groupId,
       );
 
   factory Task.fromMap(Map<String, dynamic> data) {
@@ -50,6 +57,7 @@ class Task {
       subtitle: data['subtitle'],
       date: DateTime.parse(data['date']),
       isCompleted: data['is_completed'],
+      groupId: data['task_group_id'],
     );
   }
 
@@ -60,6 +68,7 @@ class Task {
       'subtitle': subtitle,
       'date': date.toIso8601String(),
       'is_completed': isCompleted,
+      'task_group_id': groupId,
     };
   }
 }

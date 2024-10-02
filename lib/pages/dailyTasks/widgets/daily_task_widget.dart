@@ -16,6 +16,7 @@ class DailyTaskWidget extends StatelessWidget {
             MaterialPageRoute<void>(
               builder: (BuildContext context) => TaskCreatePage(
                 task: task,
+                groupId: task.groupId,
               ),
             ),
           );

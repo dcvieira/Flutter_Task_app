@@ -61,4 +61,19 @@ class SupabaseTasksRepository {
 
     return taskGroupsWithCounts;
   }
+
+  Future createTaskGroup(TaskGroup taskGroup) async {
+    final supabase = Supabase.instance.client;
+    await supabase.from('task_groups').insert(taskGroup.toMap());
+  }
+
+  Future updateTaskGroup(TaskGroup taskGroup) async {
+    final supabase = Supabase.instance.client;
+    await supabase.from('task_groups').update(taskGroup.toMap()).eq('id', taskGroup.id);
+  }
+
+  Future deleteTaskGroup(String taskGroupId) async {
+    final supabase = Supabase.instance.client;
+    await supabase.from('task_groups').delete().eq('id', taskGroupId);
+  }
 }

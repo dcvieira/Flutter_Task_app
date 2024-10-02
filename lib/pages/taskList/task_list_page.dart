@@ -93,7 +93,7 @@ class _TaskListPageState extends State<TaskListPage> {
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute<void>(
-              builder: (BuildContext context) => const TaskCreatePage(),
+              builder: (BuildContext context) =>  TaskCreatePage(groupId: widget.groupId),
             ),
           );
         },
