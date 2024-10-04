@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/pages/dailyTasks/widgets/daily_task_widget.dart';
+import 'package:todo_app/pages/dailyTasks/widgets/daily_tasks_summary_widget.dart';
 import 'package:todo_app/pages/dailyTasks/widgets/task_calendar.dart';
 import 'package:todo_app/providers/daily_task_provider.dart';
 
@@ -44,6 +45,20 @@ class _DailyTasksPageState extends State<DailyTasksPage> {
       body: Column(
         children: [
           const TaskCalendar(),
+          const SizedBox(
+            height: 10,
+          ),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+            child: DailyTasksSummaryWidget(),
+          ),
+          Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Divider(
+              color: Colors.grey.shade300,
+              height: 1,
+            ),
+          ),
           Expanded(
             child: Consumer<DailyTaskProvider>(builder: (context, provider, _) {
               if (provider.isLoading) {

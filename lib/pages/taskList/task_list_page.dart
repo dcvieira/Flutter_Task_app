@@ -15,6 +15,7 @@ class TaskListPage extends StatefulWidget {
 
 class _TaskListPageState extends State<TaskListPage> {
   late final TaskProvider taskProvider;
+
   @override
   void initState() {
     taskProvider = context.read<TaskProvider>();

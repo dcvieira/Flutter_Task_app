@@ -19,48 +19,47 @@ class TaskCalendar extends StatelessWidget {
           itemBuilder: (context, index) {
             final date =
                 DateUtils.dateOnly(dailyTaskProvider.datesInMonth[index]);
+            final selected = date == dailyTaskProvider.selectedDate;
             return GestureDetector(
               onTap: () {
                 dailyTaskProvider.selectDate(date);
               },
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                width: 52,
                 margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: selected
+                      ? Theme.of(context).colorScheme.primaryContainer
+                      : Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(10),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.13),
-                      blurRadius: 4.0,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
+                  border: Border.all(
+                    color: selected
+                        ? Theme.of(context).colorScheme.primary
+                        : Theme.of(context).colorScheme.surfaceContainer,
+                    width: 2,
+                  ),
+                  // boxShadow: [
+                  //   BoxShadow(
+                  //     color: Colors.grey.withOpacity(0.13),
+                  //     blurRadius: 4.0,
+                  //     offset: const Offset(0, 3),
+                  //   ),
+                  // ],
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       DateFormat('EEE').format(date),
+                      style: const TextStyle(fontSize: 13),
                     ),
-                    date == dailyTaskProvider.selectedDate
-                        ? Container(
-                            margin: const EdgeInsets.only(top: 8),
-                            width: 25,
-                            height: 25,
-                            decoration: const BoxDecoration(
-                              color: Colors.deepPurple,
-                              shape: BoxShape.circle,
-                            ),
-                            child: Center(
-                              child: Text(
-                                date.day.toString(),
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                            ),
-                          )
-                        : Text(date.day.toString()),
+                    Text(
+                      date.day.toString(),
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ],
                 ),
               ),

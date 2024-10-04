@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:todo_app/pages/taskGroup/widgets/task_group_item.dart';
 import 'package:todo_app/pages/taskGroupCreate/task_group_create_page.dart';
 import 'package:todo_app/providers/task_provider.dart';
+import 'package:todo_app/providers/theme_provider.dart';
 
 class TaskGroupListPage extends StatefulWidget {
   const TaskGroupListPage({super.key});
@@ -13,22 +14,31 @@ class TaskGroupListPage extends StatefulWidget {
 
 class _TaskGroupListPageState extends State<TaskGroupListPage> {
   @override
-  void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      context.read<TaskProvider>().fetchTasksGroupWithCounts();
-    });
-
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Task Groups'),
+        // create a action to swith my theme
+        actions: [
+          IconButton(
+            onPressed: () {
+              context.read<ThemeProvider>().toggleTheme();
+            },
+            icon: Icon(
+              context.select(
+                      (ThemeProvider themeProvider) => themeProvider.isDark)
+                  ? Icons.light_mode
+                  : Icons.dark_mode,
+            ),
+          ),
+        ],
       ),
       body: Consumer<TaskProvider>(
         builder: (context, taskProvider, _) {
+          if (taskProvider.isLoading) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
           return ListView.builder(
             itemCount: taskProvider.taskGroupsWithCounts.length,
             itemBuilder: (context, index) {

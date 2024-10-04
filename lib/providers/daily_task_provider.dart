@@ -36,11 +36,12 @@ class DailyTaskProvider with ChangeNotifier {
   void _setDatesInMonth(DateTime selectedDate) {
     List<DateTime> dates = [];
     DateTime firstDay = DateTime(selectedDate.year, selectedDate.month, 1);
-    DateTime lastDay = DateTime(selectedDate.year, selectedDate.month + 1, 0);
+    DateTime lastDay = DateTime(selectedDate.year, selectedDate.month + 1);
 
     for (DateTime date = firstDay;
         date.isBefore(lastDay);
         date = date.add(const Duration(days: 1))) {
+      print(date);
       dates.add(date);
     }
 
