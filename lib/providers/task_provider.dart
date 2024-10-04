@@ -1,18 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app/models/task_group.dart';
 import 'package:todo_app/models/task_model.dart';
+import 'package:todo_app/providers/task_group_provider.dart';
 import 'package:todo_app/repository/supabase_tasks_repository.dart';
 
 class TaskProvider with ChangeNotifier {
   final SupabaseTasksRepository _taskRepo = SupabaseTasksRepository();
+  final TaskGroupProvider _taskGroupProvider;
+
+  TaskProvider(this._taskGroupProvider);
 
   List<Task> _tasks = [];
   List<Task> get tasks => _tasks;
-
-  List<TaskGroupWithCounts> _taskGroupsWithCounts = [];
-  List<TaskGroupWithCounts> get taskGroupsWithCounts => _taskGroupsWithCounts;
-
-  TaskGroup? selectedTaskGroup;
 
   int get totalTasksDone => _tasks.where((t) => t.isCompleted).length;
 
@@ -29,23 +27,9 @@ class TaskProvider with ChangeNotifier {
 
   Future<void> fetchTasks(String groupId) async {
     _isLoading = true;
-    //notifyListeners();
-    try {
-      _tasks = await _taskRepo.fetchTasksByGroup(groupId);
-      _setErrorMessage();
-    } catch (e) {
-      _setErrorMessage('Erro ao buscar tarefas: $e');
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  Future<void> fetchTasksGroupWithCounts() async {
-    _isLoading = true;
     notifyListeners();
     try {
-      _taskGroupsWithCounts = await _taskRepo.getTaskGroupsWithCounts();
+      _tasks = await _taskRepo.fetchTasksByGroup(groupId);
       _setErrorMessage();
     } catch (e) {
       _setErrorMessage('Erro ao buscar tarefas: $e');
@@ -59,8 +43,8 @@ class TaskProvider with ChangeNotifier {
     try {
       await _taskRepo.createTask(task);
       _tasks.add(task);
+      _taskGroupProvider.fetchTasksGroupWithCounts();
       _setErrorMessage();
-      notifyListeners();
     } catch (e) {
       _setErrorMessage('Erro ao adicionar tarefa: $e');
     }
@@ -70,8 +54,8 @@ class TaskProvider with ChangeNotifier {
     try {
       await _taskRepo.deleteTask(id);
       _tasks.removeWhere((task) => task.id == id);
+      _taskGroupProvider.fetchTasksGroupWithCounts();
       _setErrorMessage();
-      notifyListeners();
     } catch (e) {
       _setErrorMessage('Erro ao excluir tarefa');
     }
@@ -83,51 +67,11 @@ class TaskProvider with ChangeNotifier {
       final index = _tasks.indexWhere((t) => t.id == task.id);
       if (index != -1) {
         _tasks[index] = task;
+        _taskGroupProvider.fetchTasksGroupWithCounts();
         _setErrorMessage();
       }
     } catch (e) {
       _setErrorMessage('Erro ao atualizar tarefa');
-    }
-  }
-
-  Future<void> createTaskGroup(TaskGroup taskGroup) async {
-    try {
-      await _taskRepo.createTaskGroup(taskGroup);
-      _taskGroupsWithCounts.add(TaskGroupWithCounts(
-        taskGroup: taskGroup,
-        totalTasks: 0,
-        completedTasks: 0,
-      ));
-      _setErrorMessage();
-    } catch (e) {
-      _setErrorMessage('Erro ao criar grupo de tarefas');
-    }
-  }
-
-  Future<void> updateTaskGroup(TaskGroup taskGroup) async {
-    try {
-      await _taskRepo.updateTaskGroup(taskGroup);
-
-      final index = _taskGroupsWithCounts
-          .indexWhere((t) => t.taskGroup.id == taskGroup.id);
-      if (index != -1) {
-        _taskGroupsWithCounts[index].taskGroup = taskGroup;
-        selectedTaskGroup = taskGroup;
-        _setErrorMessage();
-      }
-    } catch (e) {
-      _setErrorMessage('Erro ao criar grupo de tarefas');
-    }
-  }
-
-  Future<void> deleteTaskGroup(String id) async {
-    try {
-      await _taskRepo.deleteTaskGroup(id);
-      _taskGroupsWithCounts.removeWhere((task) => task.taskGroup.id == id);
-      _setErrorMessage();
-      notifyListeners();
-    } catch (e) {
-      _setErrorMessage('Erro ao excluir tarefa');
     }
   }
 }

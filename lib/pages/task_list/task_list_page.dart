@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_app/pages/taskCreate/task_create_page.dart';
-import 'package:todo_app/pages/taskGroupCreate/task_group_create_page.dart';
-import 'package:todo_app/pages/taskList/widgets/task_widget.dart';
-import 'package:todo_app/pages/taskList/widgets/tasks_summary_widget.dart';
+import 'package:todo_app/pages/task_create/task_create_page.dart';
+import 'package:todo_app/pages/task_group_create/task_group_create_page.dart';
+import 'package:todo_app/pages/task_list/widgets/delete_task.dart';
+import 'package:todo_app/pages/task_list/widgets/task_widget.dart';
+import 'package:todo_app/pages/task_list/widgets/tasks_summary_widget.dart';
+import 'package:todo_app/providers/task_group_provider.dart';
 import 'package:todo_app/providers/task_provider.dart';
 
 class TaskListPage extends StatefulWidget {
@@ -15,22 +17,15 @@ class TaskListPage extends StatefulWidget {
 
 class _TaskListPageState extends State<TaskListPage> {
   late final TaskProvider taskProvider;
+  late final TaskGroupProvider taskGroupProvider;
 
   @override
   void initState() {
     taskProvider = context.read<TaskProvider>();
-    taskProvider.fetchTasks(taskProvider.selectedTaskGroup!.id);
-    // provider.addListener(
-    //   () {
-    //     if (provider.errorMessage != null) {
-    //       ScaffoldMessenger.of(context).showSnackBar(
-    //         SnackBar(
-    //           content: Text(provider.errorMessage!),
-    //         ),
-    //       );
-    //     }
-    //   },
-    // );
+    taskGroupProvider = context.read<TaskGroupProvider>();
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      taskProvider.fetchTasks(taskGroupProvider.selectedTaskGroup!.id);
+    });
     super.initState();
   }
 
@@ -44,7 +39,7 @@ class _TaskListPageState extends State<TaskListPage> {
               Navigator.of(context).push(
                 MaterialPageRoute<void>(
                     builder: (BuildContext context) => TaskGroupCreatePage(
-                          taskGroupForEdit: taskProvider.selectedTaskGroup,
+                          taskGroupForEdit: taskGroupProvider.selectedTaskGroup,
                         )),
               );
             },
@@ -56,7 +51,7 @@ class _TaskListPageState extends State<TaskListPage> {
         if (taskProvider.isLoading) {
           return Center(
             child: CircularProgressIndicator(
-              color: Color(taskProvider.selectedTaskGroup!.color),
+              color: Color(taskGroupProvider.selectedTaskGroup!.color),
             ),
           );
         }
@@ -109,25 +104,11 @@ class _TaskListPageState extends State<TaskListPage> {
                         );
                       },
                       key: Key(task.id),
-                      background: const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.delete_outline,
-                            color: Colors.grey,
-                          ),
-                          SizedBox(
-                            width: 8,
-                          ),
-                          Text('Delete Task',
-                              style: TextStyle(
-                                color: Colors.grey,
-                              ))
-                        ],
-                      ),
+                      background: const DeleteTask(),
                       child: TaskWidget(
                         task: task,
-                        color: Color(taskProvider.selectedTaskGroup!.color),
+                        color:
+                            Color(taskGroupProvider.selectedTaskGroup!.color),
                       ));
                 },
               ),
@@ -139,8 +120,8 @@ class _TaskListPageState extends State<TaskListPage> {
         onPressed: () {
           Navigator.of(context).push(
             MaterialPageRoute<void>(
-              builder: (BuildContext context) =>
-                  TaskCreatePage(groupId: taskProvider.selectedTaskGroup!.id),
+              builder: (BuildContext context) => TaskCreatePage(
+                  groupId: taskGroupProvider.selectedTaskGroup!.id),
             ),
           );
         },

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/models/task_model.dart';
-import 'package:todo_app/pages/taskCreate/task_create_page.dart';
+import 'package:todo_app/pages/task_create/task_create_page.dart';
 import 'package:todo_app/providers/daily_task_provider.dart';
 
 class DailyTaskWidget extends StatelessWidget {
@@ -43,8 +43,6 @@ class DailyTaskWidget extends StatelessWidget {
         title: Text(
           task.title,
           style: TextStyle(
-            // color:
-            //     task.isCompleted ? Theme.of(context).primaryColor : Colors.black,
             fontWeight: FontWeight.w500,
             decoration: task.isCompleted ? TextDecoration.lineThrough : null,
           ),

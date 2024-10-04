@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/models/task_model.dart';
-import 'package:todo_app/pages/taskCreate/task_create_page.dart';
+import 'package:todo_app/pages/task_create/task_create_page.dart';
 import 'package:todo_app/providers/task_provider.dart';
 
 class TaskWidget extends StatelessWidget {

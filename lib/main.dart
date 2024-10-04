@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:todo_app/models/task_group.dart';
-import 'package:todo_app/pages/dailyTasks/daily_tasks_page.dart';
 import 'package:todo_app/pages/home/home_page.dart';
-import 'package:todo_app/pages/taskGroup/task_group_list_page.dart';
-import 'package:todo_app/pages/taskList/task_list_page.dart';
 import 'package:todo_app/providers/daily_task_provider.dart';
+import 'package:todo_app/providers/task_group_provider.dart';
 import 'package:todo_app/providers/task_provider.dart';
+import 'package:todo_app/providers/theme_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,13 +14,23 @@ Future<void> main() async {
     url: '',
     anonKey: '',
   );
+
+  final taskGroupProvider = TaskGroupProvider();
+
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(
-        create: (_) => TaskProvider(),
+        create: (_) => ThemeProvider(),
       ),
       ChangeNotifierProvider(
-        create: (_) => DailyTaskProvider()..selectDate(DateTime.now()),
+        create: (_) => taskGroupProvider..fetchTasksGroupWithCounts(),
+      ),
+      ChangeNotifierProvider(
+        create: (_) => TaskProvider(taskGroupProvider),
+      ),
+      ChangeNotifierProvider(
+        create: (_) =>
+            DailyTaskProvider(taskGroupProvider)..selectDate(DateTime.now()),
       ),
     ],
     child: const MyApp(),
@@ -32,13 +40,17 @@ Future<void> main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      debugShowCheckedModeBanner: false,
+      title: 'Task APP',
+      themeMode: context.select((ThemeProvider themeProvider) =>
+          themeProvider.isDark ? ThemeMode.dark : ThemeMode.light),
+      theme: ThemeData.light(
+        useMaterial3: true,
+      ),
+      darkTheme: ThemeData.dark(
         useMaterial3: true,
       ),
       home: const HomePage(),

@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:todo_app/models/task_model.dart';
+import 'package:todo_app/providers/task_group_provider.dart';
 import 'package:todo_app/repository/supabase_tasks_repository.dart';
 
 class DailyTaskProvider with ChangeNotifier {
   final SupabaseTasksRepository _taskRepo = SupabaseTasksRepository();
+
+  final TaskGroupProvider _taskGroupProvider;
+
+  DailyTaskProvider(this._taskGroupProvider);
 
   DateTime _selectedDate = DateTime.now();
   DateTime get selectedDate => _selectedDate;
@@ -41,7 +46,6 @@ class DailyTaskProvider with ChangeNotifier {
     for (DateTime date = firstDay;
         date.isBefore(lastDay);
         date = date.add(const Duration(days: 1))) {
-      print(date);
       dates.add(date);
     }
 
@@ -69,7 +73,7 @@ class DailyTaskProvider with ChangeNotifier {
       if (index != -1) {
         _tasks[index] = task;
         _setErrorMessage();
-        notifyListeners();
+        _taskGroupProvider.fetchTasksGroupWithCounts();
       }
     } catch (e) {
       _setErrorMessage('Erro ao atualizar tarefa');

@@ -1,24 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_app/pages/taskGroup/widgets/task_group_item.dart';
-import 'package:todo_app/pages/taskGroupCreate/task_group_create_page.dart';
-import 'package:todo_app/providers/task_provider.dart';
+import 'package:todo_app/pages/task_group_list/widgets/delete_task_group.dart';
+import 'package:todo_app/pages/task_group_list/widgets/task_group_item.dart';
+import 'package:todo_app/pages/task_group_create/task_group_create_page.dart';
+import 'package:todo_app/providers/task_group_provider.dart';
 import 'package:todo_app/providers/theme_provider.dart';
 
-class TaskGroupListPage extends StatefulWidget {
+class TaskGroupListPage extends StatelessWidget {
   const TaskGroupListPage({super.key});
 
-  @override
-  State<TaskGroupListPage> createState() => _TaskGroupListPageState();
-}
-
-class _TaskGroupListPageState extends State<TaskGroupListPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Task Groups'),
-        // create a action to swith my theme
         actions: [
           IconButton(
             onPressed: () {
@@ -33,21 +28,20 @@ class _TaskGroupListPageState extends State<TaskGroupListPage> {
           ),
         ],
       ),
-      body: Consumer<TaskProvider>(
-        builder: (context, taskProvider, _) {
-          if (taskProvider.isLoading) {
+      body: Consumer<TaskGroupProvider>(
+        builder: (context, taskGroupProvider, _) {
+          if (taskGroupProvider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
 
           return ListView.builder(
-            itemCount: taskProvider.taskGroupsWithCounts.length,
+            itemCount: taskGroupProvider.taskGroupsWithCounts.length,
             itemBuilder: (context, index) {
               final taskGroupWithCount =
-                  taskProvider.taskGroupsWithCounts[index];
+                  taskGroupProvider.taskGroupsWithCounts[index];
               return Dismissible(
                   onDismissed: (direction) async {
-                    await context
-                        .read<TaskProvider>()
+                    await taskGroupProvider
                         .deleteTaskGroup(taskGroupWithCount.taskGroup.id);
                   },
                   confirmDismiss: (direction) {
@@ -76,24 +70,7 @@ class _TaskGroupListPageState extends State<TaskGroupListPage> {
                       },
                     );
                   },
-                  background: const Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.delete_outline,
-                        color: Colors.red,
-                      ),
-                      SizedBox(
-                        width: 8,
-                      ),
-                      Text(
-                        'Delete Task Group',
-                        style: TextStyle(
-                          color: Colors.red,
-                        ),
-                      )
-                    ],
-                  ),
+                  background: const DeleteTaskGroup(),
                   key: Key(taskGroupWithCount.taskGroup.id),
                   child: TaskGroupItem(taskGroupWithCount: taskGroupWithCount));
             },

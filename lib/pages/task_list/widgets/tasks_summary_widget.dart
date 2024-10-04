@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app/providers/task_group_provider.dart';
+
 import 'package:todo_app/providers/task_provider.dart';
 
 class TasksSummaryWidget extends StatelessWidget {
@@ -10,6 +12,7 @@ class TasksSummaryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final taskProvider = context.watch<TaskProvider>();
+    final taskGroupProvider = context.watch<TaskGroupProvider>();
 
     return SizedBox(
       child: Row(
@@ -21,7 +24,7 @@ class TasksSummaryWidget extends StatelessWidget {
             child: CircularProgressIndicator(
               strokeWidth: 5,
               valueColor: AlwaysStoppedAnimation(
-                  Color(taskProvider.selectedTaskGroup!.color)),
+                  Color(taskGroupProvider.selectedTaskGroup!.color)),
               backgroundColor: Colors.grey,
               value: taskProvider.tasks.isNotEmpty
                   ? (taskProvider.totalTasksDone / taskProvider.tasks.length)
@@ -38,7 +41,7 @@ class TasksSummaryWidget extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                taskProvider.selectedTaskGroup!.name,
+                taskGroupProvider.selectedTaskGroup!.name,
                 style: Theme.of(context).textTheme.headlineMedium,
               ),
               const SizedBox(

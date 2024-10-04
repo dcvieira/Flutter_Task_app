@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:todo_app/models/task_group.dart';
-import 'package:todo_app/providers/task_provider.dart';
+import 'package:todo_app/pages/task_group_create/widgets/colors_picker.dart';
+import 'package:todo_app/providers/task_group_provider.dart';
 
 class TaskGroupCreatePage extends StatefulWidget {
   const TaskGroupCreatePage({super.key, this.taskGroupForEdit});
@@ -13,7 +14,6 @@ class TaskGroupCreatePage extends StatefulWidget {
 
 class _TaskGroupCreatePageState extends State<TaskGroupCreatePage> {
   final nameController = TextEditingController();
-  IconData iconData = Icons.add;
   Color selectedColor = Colors.red;
   final formKey = GlobalKey<FormState>();
   bool editMode = false;
@@ -48,7 +48,13 @@ class _TaskGroupCreatePageState extends State<TaskGroupCreatePage> {
                 Text('Select Color',
                     style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 10),
-                _buildColorField(),
+                ColorPicker(
+                    selectedColor: selectedColor,
+                    onColorSelected: (color) {
+                      setState(() {
+                        selectedColor = color;
+                      });
+                    }),
               ],
             ),
           ),
@@ -89,61 +95,11 @@ class _TaskGroupCreatePageState extends State<TaskGroupCreatePage> {
     );
   }
 
-  Widget _buildColorField() {
-    final colors = [
-      Colors.red,
-      Colors.green,
-      Colors.blue,
-      Colors.yellow,
-      Colors.purple,
-      Colors.orange,
-      Colors.pink,
-      Colors.teal,
-      Colors.cyan,
-      Colors.brown,
-      Colors.grey,
-    ];
-    return SizedBox(
-      height: 50,
-      child: ListView.builder(
-          scrollDirection: Axis.horizontal,
-          itemCount: colors.length,
-          itemBuilder: (context, index) {
-            final color = colors[index];
-            return GestureDetector(
-              onTap: () {
-                setState(() {
-                  selectedColor = color;
-                });
-              },
-              child: Container(
-                margin: const EdgeInsets.all(3),
-                decoration: BoxDecoration(
-                  color: color,
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: color.value == selectedColor.value
-                        ? Colors.black
-                        : Colors.transparent,
-                    width: 2,
-                  ),
-                ),
-                height: 50,
-                width: 50,
-                child: color.value == selectedColor.value
-                    ? const Icon(Icons.check, color: Colors.white)
-                    : null,
-              ),
-            );
-          }),
-    );
-  }
-
   Future<void> _submitForm() async {
     if (!formKey.currentState!.validate()) {
       return;
     }
-    final taskProvider = context.read<TaskProvider>();
+    final taskGroupProvider = context.read<TaskGroupProvider>();
 
     if (editMode) {
       final taskGroup = widget.taskGroupForEdit!.copyWith(
@@ -151,14 +107,14 @@ class _TaskGroupCreatePageState extends State<TaskGroupCreatePage> {
         color: selectedColor.value,
       );
 
-      await taskProvider.updateTaskGroup(taskGroup);
+      await taskGroupProvider.updateTaskGroup(taskGroup);
     } else {
       final taskGroup = TaskGroup.create(
         name: nameController.text,
         color: selectedColor.value,
       );
 
-      await taskProvider.createTaskGroup(taskGroup);
+      await taskGroupProvider.createTaskGroup(taskGroup);
     }
 
     if (mounted) {

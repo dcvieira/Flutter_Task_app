@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo_app/pages/dailyTasks/widgets/daily_task_widget.dart';
-import 'package:todo_app/pages/dailyTasks/widgets/daily_tasks_summary_widget.dart';
-import 'package:todo_app/pages/dailyTasks/widgets/task_calendar.dart';
+import 'package:todo_app/pages/daily_tasks/widgets/daily_task_widget.dart';
+import 'package:todo_app/pages/daily_tasks/widgets/daily_tasks_summary_widget.dart';
+import 'package:todo_app/pages/daily_tasks/widgets/task_calendar.dart';
 import 'package:todo_app/providers/daily_task_provider.dart';
 
 class DailyTasksPage extends StatefulWidget {
