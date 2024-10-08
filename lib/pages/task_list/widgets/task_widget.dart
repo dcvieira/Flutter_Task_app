@@ -31,9 +31,10 @@ class TaskWidget extends StatelessWidget {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 600),
           decoration: BoxDecoration(
-              color: task.isCompleted ? color : Colors.white,
-              shape: BoxShape.circle,
-              border: Border.all(color: Colors.grey, width: .8)),
+            color: task.isCompleted ? color : Colors.white,
+            shape: BoxShape.circle,
+            border: Border.all(color: Colors.grey, width: .8),
+          ),
           child: const Icon(
             Icons.check,
             color: Colors.white,
@@ -43,8 +44,6 @@ class TaskWidget extends StatelessWidget {
       title: Text(
         task.title,
         style: TextStyle(
-          // color:
-          //     task.isCompleted ? Theme.of(context).primaryColor : Colors.black,
           fontWeight: FontWeight.w500,
           decoration: task.isCompleted ? TextDecoration.lineThrough : null,
         ),

@@ -36,22 +36,25 @@ class TasksSummaryWidget extends StatelessWidget {
           ),
 
           /// Texts
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                taskGroupProvider.selectedTaskGroup!.name,
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(
-                height: 3,
-              ),
-              Text(
-                "${taskProvider.totalTasksDone} of ${taskProvider.tasks.length} task",
-                style: Theme.of(context).textTheme.bodyLarge,
-              ),
-            ],
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  taskGroupProvider.selectedTaskGroup!.name,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
+                const SizedBox(
+                  height: 3,
+                ),
+                Text(
+                  "${taskProvider.totalTasksDone} of ${taskProvider.tasks.length} task",
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+              ],
+            ),
           )
         ],
       ),

@@ -20,19 +20,28 @@ CREATE TABLE IF NOT EXISTS tasks (
 
 
 INSERT INTO task_groups (id, name, color) VALUES
-  ('1f1a7311-36f8-4fd3-bc4c-3fa3e25e8ef2', 'Work', 4280391411),  
-  ('1a5b6c7d-2e3f-4a5b-8c7d-8f9e0a1b2c3d', 'Personal', 4282339765), 
-  ('5d2e4c6f-7e5d-3a4b-1c2d-0a9b8f7e6c5d', 'Shopping', 4294198070);
-
+  ('d1a35f2e-8c64-4a98-98f1-000000000001', 'Compras no Supermercado', 4294198070),
+  ('d1a35f2e-8c64-4a98-98f1-000000000002', 'Trabalho', 4280391411),
+  ('d1a35f2e-8c64-4a98-98f1-000000000003', 'Exercícios Físicos', 4293467747),
+  ('d1a35f2e-8c64-4a98-98f1-000000000004', 'Organização da Casa', 4288423856),
+  ('d1a35f2e-8c64-4a98-98f1-000000000005', 'Estudos', 4278228616);
 
 
 INSERT INTO tasks (id, title, subtitle, date, is_completed, task_group_id) VALUES
-  ('ffbb1234-5678-9abc-def0-123456789abc', 'Project A', 'Complete initial draft', '2024-09-28 00:00:00', false, '1f1a7311-36f8-4fd3-bc4c-3fa3e25e8ef2'), -- Associado ao grupo Work
-  ('abcd1234-5678-9abc-def0-0987654321ff', 'Grocery shopping', 'Buy fruits and vegetables', '2024-09-29 00:00:00', false, '5d2e4c6f-7e5d-3a4b-1c2d-0a9b8f7e6c5d'), -- Associado ao grupo Shopping
-  ('1234abcd-5678-9abc-def0-fedcba987654', 'Exercise', 'Go for a run', '2024-09-30 00:00:00', true, '1a5b6c7d-2e3f-4a5b-8c7d-8f9e0a1b2c3d'), -- Associado ao grupo Personal
-  ('ffcc2233-5678-9abc-def0-234567890abc', 'Prepare report', 'Monthly financial report', '2024-09-27 00:00:00', true, '1f1a7311-36f8-4fd3-bc4c-3fa3e25e8ef2'), -- Associado ao grupo Work
-  ('aabb3344-5678-9abc-def0-876543210fed', 'Birthday gift', 'Buy a present for Sarah', '2024-09-30 00:00:00', false, '1a5b6c7d-2e3f-4a5b-8c7d-8f9e0a1b2c3d'); -- Associado ao grupo Personal
+  -- Compras no Supermercado
+  ('d1a35f2e-8c64-4a98-98f1-000000000006', 'Comprar leite', 'Desnatado, 2 litros', NOW()::date + TIME '00:00', false, 'd1a35f2e-8c64-4a98-98f1-000000000001'),
+  ('d1a35f2e-8c64-4a98-98f1-000000000007', 'Comprar ovos', 'Caixa com 12', NOW()::date + TIME '00:00', false, 'd1a35f2e-8c64-4a98-98f1-000000000001'),
+  ('d1a35f2e-8c64-4a98-98f1-000000000008', 'Comprar pão', 'Pão integral', NOW()::date + TIME '00:00', true, 'd1a35f2e-8c64-4a98-98f1-000000000001'),
+  ('d1a35f2e-8c64-4a98-98f1-000000000009', 'Comprar frutas', 'Banana e maçã', NOW()::date + TIME '00:00', false, 'd1a35f2e-8c64-4a98-98f1-000000000001'),
+  ('d1a35f2e-8c64-4a98-98f1-000000000010', 'Comprar detergente', 'Limão, 500ml', NOW()::date + TIME '00:00', false, 'd1a35f2e-8c64-4a98-98f1-000000000001'),
 
+  -- Trabalho
+  ('d1a35f2e-8c64-4a98-98f1-000000000011', 'Enviar relatório semanal', 'Relatório de vendas', NOW()::date + TIME '00:00', false, 'd1a35f2e-8c64-4a98-98f1-000000000002'),
+  ('d1a35f2e-8c64-4a98-98f1-000000000012', 'Preparar apresentação', 'Dados do último trimestre', NOW()::date + TIME '00:00', true, 'd1a35f2e-8c64-4a98-98f1-000000000002'),
+  ('d1a35f2e-8c64-4a98-98f1-000000000013', 'Reunião com equipe', 'Planejamento semanal', NOW()::date + TIME '00:00', false, 'd1a35f2e-8c64-4a98-98f1-000000000002'),
+  ('d1a35f2e-8c64-4a98-98f1-000000000014', 'Responder e-mails', 'Clientes e fornecedores', NOW()::date + TIME '00:00', true, 'd1a35f2e-8c64-4a98-98f1-000000000002'),
+  ('d1a35f2e-8c64-4a98-98f1-000000000015', 'Revisar contratos', 'Verificar cláusulas de renovação', NOW()::date + TIME '00:00', false, 'd1a35f2e-8c64-4a98-98f1-000000000002'),
 
-
-https://www.behance.net/gallery/184079511/To-Do-Mobile-App-ToDo-Trax?tracking_source=search_projects|todo+list&l=15
+  -- Exercícios Físicos
+  ('d1a35f2e-8c64-4a98-98f1-000000000016', 'Caminhar no parque', '30 minutos', NOW()::date + TIME '00:00', true, 'd1a35f2e-8c64-4a98-98f1-000000000003'),
+  ('d1a35f2e-8c64-4a98-98f1-000000000017', 'Fazer alongamento', '15 minutos', NOW()::date + TIME '00:00', false, 'd1a35f2e-8c64-4a98-98f1-000000000003')
